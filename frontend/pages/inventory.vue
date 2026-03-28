@@ -4,7 +4,6 @@
   import type { ItemSummary } from "~~/lib/api/types/data-contracts";
   import BaseContainer from "@/components/Base/Container.vue";
   import { Button } from "@/components/ui/button";
-  import { Badge } from "@/components/ui/badge";
   import MdiCheckCircle from "~icons/mdi/check-circle";
   import MdiAlertCircle from "~icons/mdi/alert-circle";
   import MdiClockAlert from "~icons/mdi/clock-alert";
