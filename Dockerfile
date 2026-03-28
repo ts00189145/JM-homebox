@@ -54,7 +54,7 @@ COPY ./backend .
 
 # Clear old public files and copy new ones from frontend build
 RUN rm -rf ./app/api/public
-COPY --from=frontend-builder /app/.output/public ./app/api/static/public
+COPY --from=frontend-builder /app/.zeabur/output/static ./app/api/static/public
 
 # Use cache for Go build artifacts
 RUN --mount=type=cache,target=/root/.cache/go-build \
