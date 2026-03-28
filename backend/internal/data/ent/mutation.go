@@ -4895,7 +4895,10 @@ func (m *ItemMutation) OldLastInventoryAt(ctx context.Context) (v time.Time, err
 	if err != nil {
 		return v, fmt.Errorf("querying old value for OldLastInventoryAt: %w", err)
 	}
-	return oldValue.LastInventoryAt, nil
+	if oldValue.LastInventoryAt != nil {
+		return *oldValue.LastInventoryAt, nil
+	}
+	return v, nil
 }
 
 // ClearLastInventoryAt clears the value of the "last_inventory_at" field.
@@ -4945,7 +4948,10 @@ func (m *ItemMutation) OldCableLength(ctx context.Context) (v float64, err error
 	if err != nil {
 		return v, fmt.Errorf("querying old value for OldCableLength: %w", err)
 	}
-	return oldValue.CableLength, nil
+	if oldValue.CableLength != nil {
+		return *oldValue.CableLength, nil
+	}
+	return v, nil
 }
 
 // AddCableLength adds f to the "cable_length" field.
@@ -5014,7 +5020,10 @@ func (m *ItemMutation) OldCableLengthUnit(ctx context.Context) (v item.CableLeng
 	if err != nil {
 		return v, fmt.Errorf("querying old value for OldCableLengthUnit: %w", err)
 	}
-	return oldValue.CableLengthUnit, nil
+	if oldValue.CableLengthUnit != nil {
+		return *oldValue.CableLengthUnit, nil
+	}
+	return v, nil
 }
 
 // ClearCableLengthUnit clears the value of the "cable_length_unit" field.
