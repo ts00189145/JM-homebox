@@ -1,5 +1,5 @@
 # Node dependencies stage
-FROM public.ecr.aws/docker/library/node:22-alpine AS frontend-dependencies
+FROM node:22-alpine AS frontend-dependencies
 WORKDIR /app
 
 # Install pnpm 10 (latest stable, works reliably in Alpine)
@@ -10,19 +10,22 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # Build Nuxt (frontend) stage
-FROM public.ecr.aws/docker/library/node:22-alpine AS frontend-builder
+FROM node:22-alpine AS frontend-builder
 WORKDIR /app
 
 # Install pnpm 10 (latest stable)
 RUN npm install -g pnpm@10
 
 # Copy over source files and node_modules from dependencies stage
-COPY frontend . 
+COPY frontend .
 COPY --from=frontend-dependencies /app/node_modules ./node_modules
+
+# Increase Node.js heap memory to prevent OOM during Nuxt build
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN pnpm build
 
 # Go dependencies stage
-FROM public.ecr.aws/docker/library/golang:alpine AS builder-dependencies
+FROM golang:alpine AS builder-dependencies
 WORKDIR /go/src/app
 
 # Copy go.mod and go.sum for better caching
@@ -30,7 +33,7 @@ COPY ./backend/go.mod ./backend/go.sum ./
 RUN go mod download
 
 # Build API stage
-FROM public.ecr.aws/docker/library/golang:alpine AS builder
+FROM golang:alpine AS builder
 ARG TARGETOS
 ARG TARGETARCH
 ARG BUILD_TIME
@@ -66,7 +69,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     fi
 
 # Production stage
-FROM public.ecr.aws/docker/library/alpine:latest
+FROM alpine:latest
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_CONN_STRING=file:///?no_tmp_dir=true
 ENV HBOX_STORAGE_PREFIX_PATH=data
@@ -92,7 +95,7 @@ RUN chmod +x /app/api
 
 # Labels and configuration for the final image
 LABEL Name=homebox Version=0.0.1
-LABEL org.opencontainers.image.source="https://github.com/sysadminsmedia/homebox"
+LABEL org.opencontainers.image.source="https://github.com/ts00189145/JM-homebox"
 
 # Expose necessary ports for Homebox
 EXPOSE 7745
