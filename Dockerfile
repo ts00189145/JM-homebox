@@ -79,13 +79,11 @@ ENV HBOX_LABELMAKER_BOLD_FONT_PATH=/usr/share/fonts/noto-cjk/NotoSansCJKtc-Bold.
 RUN apk --no-cache add ca-certificates wget mosquitto-clients && \
     if [ "$TARGETARCH" != "arm" ] || [ "$TARGETARCH" != "riscv64" ]; then apk --no-cache add libwebp libavif libheif libjxl; fi
 
-# Install Noto Sans CJK Traditional Chinese fonts for label generation
+# Embed Noto Sans CJK Traditional Chinese fonts for label generation
 # These fonts prevent "tofu" (□□□) rendering for Chinese characters in labels
-RUN mkdir -p /usr/share/fonts/noto-cjk && \
-    wget -q -O /usr/share/fonts/noto-cjk/NotoSansCJKtc-Regular.otf \
-        "https://github.com/notofonts/noto-cjk/raw/Sans2.004R/Sans/OTF/TraditionalChinese/NotoSansCJKtc-Regular.otf" && \
-    wget -q -O /usr/share/fonts/noto-cjk/NotoSansCJKtc-Bold.otf \
-        "https://github.com/notofonts/noto-cjk/raw/Sans2.004R/Sans/OTF/TraditionalChinese/NotoSansCJKtc-Bold.otf"
+RUN mkdir -p /usr/share/fonts/noto-cjk
+COPY fonts/NotoSansCJKtc-Regular.otf /usr/share/fonts/noto-cjk/NotoSansCJKtc-Regular.otf
+COPY fonts/NotoSansCJKtc-Bold.otf /usr/share/fonts/noto-cjk/NotoSansCJKtc-Bold.otf
 
 # Create application directory and copy over built Go binary
 RUN mkdir /app
